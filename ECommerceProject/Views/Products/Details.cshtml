@@ -1,0 +1,78 @@
+﻿@model ECommerceProject.Models.Product
+
+@{
+    ViewData["Title"] = "Chi tiết sản phẩm";
+}
+
+<div class="container mt-5">
+    <!-- Breadcrumb: Thanh điều hướng nhỏ -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Trang chủ</a></li>
+            <li class="breadcrumb-item active" aria-current="page">@Model.ProductName</li>
+        </ol>
+    </nav>
+
+    <div class="card shadow border-0">
+        <div class="card-body p-4">
+            <div class="row">
+                <!-- CỘT TRÁI: HÌNH ẢNH -->
+                <div class="col-md-5 mb-4 mb-md-0">
+                    <div class="border rounded overflow-hidden d-flex justify-content-center align-items-center bg-white" style="height: 400px;">
+                        <img src="~/images/@Model.ImageUrl" class="img-fluid" alt="@Model.ProductName"
+                             style="max-height: 100%; width: auto; object-fit: contain;">
+                    </div>
+                </div>
+
+                <!-- CỘT PHẢI: THÔNG TIN -->
+                <div class="col-md-7">
+                    <h2 class="fw-bold text-dark">@Model.ProductName</h2>
+
+                    <div class="mb-3">
+                        <span class="badge bg-success me-2">Còn hàng</span>
+                        <span class="text-muted">Mã SP: #@Model.ProductId</span>
+                        <!-- Nếu có Category -->
+                        @if (Model.Category != null)
+                        {
+                            <span class="text-muted border-start ps-2 ms-2">Danh mục: @Model.Category.CategoryName</span>
+                        }
+                    </div>
+
+                    <!-- Giá tiền -->
+                    <h3 class="text-danger fw-bold mb-4">
+                        @Model.Price.ToString("#,##0") VNĐ
+                    </h3>
+
+                    <!-- Mô tả sản phẩm -->
+                    <div class="mb-4">
+                        <h5 class="fw-bold">Mô tả sản phẩm:</h5>
+                        <p class="text-muted" style="line-height: 1.6;">
+                            @(Model.Description ?? "Đang cập nhật thông tin sản phẩm...")
+                        </p>
+                    </div>
+
+                    <!-- Các ưu đãi -->
+                    <div class="alert alert-light border mb-4">
+                        <ul class="list-unstyled mb-0 small">
+                            <li class="mb-1"><i class="fas fa-check-circle text-success me-2"></i>Bảo hành chính hãng 12 tháng</li>
+                            <li class="mb-1"><i class="fas fa-truck text-primary me-2"></i>Miễn phí vận chuyển toàn quốc</li>
+                            <li><i class="fas fa-sync-alt text-warning me-2"></i>Đổi trả trong vòng 7 ngày</li>
+                        </ul>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <!-- Nút hành động -->
+                    <div class="d-grid gap-2 d-md-block">
+                        <a asp-controller="Cart" asp-action="AddToCart" asp-route-id="@Model.ProductId" class="btn btn-success btn-lg px-5 me-md-2">
+                            <i class="fas fa-cart-plus me-2"></i> Thêm vào giỏ
+                        </a>
+                        <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary btn-lg">
+                            <i class="fas fa-arrow-left me-2"></i> Quay lại
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

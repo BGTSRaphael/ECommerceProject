@@ -1,0 +1,119 @@
+﻿@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - MyShop</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <!-- FontAwesome (Icon) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+            <div class="container">
+                <!-- Logo trang web -->
+                <a class="navbar-brand fw-bold text-primary" asp-area="" asp-controller="Home" asp-action="Index">
+                    <i class="fas fa-store me-2"></i>MyShop
+                </a>
+
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <!-- MENU BÊN TRÁI -->
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-controller="Home" asp-action="Index">Trang chủ</a>
+                        </li>
+                        <li class="nav-item">
+                            <!-- ĐÃ SỬA: Link trỏ về trang Products có bộ lọc -->
+                            <a class="nav-link text-dark" asp-controller="Products" asp-action="Index">Sản phẩm</a>
+                        </li>
+                    </ul>
+
+                    <!-- MENU BÊN PHẢI (Giỏ hàng & Tài khoản) -->
+                    <ul class="navbar-nav">
+                        <!-- Nút Giỏ hàng -->
+                        <li class="nav-item me-3">
+                            <a class="nav-link text-dark position-relative" asp-controller="Cart" asp-action="Index">
+                                <i class="fas fa-shopping-cart fa-lg"></i> Giỏ hàng
+                            </a>
+                        </li>
+
+                        <!-- LOGIC KIỂM TRA ĐĂNG NHẬP -->
+                        @if (HttpContextAccessor.HttpContext.Session.GetString("CustomerName") != null)
+                        {
+                            // TRƯỜNG HỢP ĐÃ ĐĂNG NHẬP
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle text-primary fw-bold" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Xin chào, @HttpContextAccessor.HttpContext.Session.GetString("CustomerName")
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                    <!-- Link Hồ sơ -->
+                                    <li>
+                                        <a class="dropdown-item" asp-controller="Account" asp-action="Profile">
+                                            <i class="fas fa-user-circle me-2"></i>Hồ sơ cá nhân
+                                        </a>
+                                    </li>
+
+                                    <!-- Link Đơn mua -->
+                                    <li>
+                                        <a class="dropdown-item" asp-controller="Orders" asp-action="Index">
+                                            <i class="fas fa-history me-2"></i>Lịch sử đơn hàng
+                                        </a>
+                                    </li>
+
+                                    <li><hr class="dropdown-divider"></li>
+
+                                    <!-- Nút Đăng xuất -->
+                                    <li>
+                                        <a class="dropdown-item text-danger" asp-controller="Account" asp-action="Logout">
+                                            <i class="fas fa-sign-out-alt me-2"></i>Đăng xuất
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                        }
+                        else
+                        {
+                            // TRƯỜNG HỢP CHƯA ĐĂNG NHẬP
+                            <li class="nav-item">
+                                <a class="nav-link text-dark btn btn-outline-light me-2" asp-controller="Account" asp-action="Login">Đăng nhập</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link btn btn-primary text-white px-3" asp-controller="Account" asp-action="Register">Đăng ký</a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted bg-light mt-auto py-3">
+        <div class="container text-center">
+            &copy; 2024 - MyShop - <a asp-area="" asp-controller="Home" asp-action="Privacy">Chính sách bảo mật</a>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

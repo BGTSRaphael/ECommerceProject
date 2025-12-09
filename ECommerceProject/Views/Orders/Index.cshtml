@@ -1,0 +1,97 @@
+﻿@model IEnumerable<ECommerceProject.Models.Cart>
+@{
+    ViewData["Title"] = "Lịch sử đơn hàng";
+}
+
+<div class="container mt-5">
+    <h2 class="fw-bold mb-4 text-primary border-bottom pb-2">
+        <i class="fas fa-history me-2"></i>Lịch sử mua hàng
+    </h2>
+
+    <!-- Hiển thị thông báo lỗi hoặc thành công từ Controller -->
+    @if (TempData["Message"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i>@TempData["Message"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i>@TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (Model.Any())
+    {
+        <div class="table-responsive shadow-sm rounded">
+            <table class="table table-hover align-middle mb-0 bg-white">
+                <thead class="bg-light text-secondary">
+                    <tr>
+                        <th class="py-3 ps-4">Mã đơn</th>
+                        <th>Ngày đặt</th>
+                        <th>Tổng tiền</th>
+                        <th class="text-center">Trạng thái</th>
+                        <th class="text-end pe-4">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        decimal total = item.CartDetails.Sum(d => d.Quantity * d.PriceAtTime);
+                        <tr>
+                            <td class="ps-4 fw-bold text-primary">#@item.CartId</td>
+                            <td>@item.DateCreated.ToString("dd/MM/yyyy HH:mm")</td>
+                            <td class="fw-bold text-danger">@total.ToString("#,##0") VNĐ</td>
+
+                            <!-- Hiển thị trạng thái -->
+                            <td class="text-center">
+                                @if (item.OrderStatus == 0)
+                                {
+                                    <span class="badge bg-warning text-dark">Chờ xác nhận</span>
+                                }
+                                else if (item.OrderStatus == 1)
+                                {
+                                    <span class="badge bg-primary">Đang giao</span>
+                                }
+                                else if (item.OrderStatus == 2)
+                                {
+                                    <span class="badge bg-success">Giao thành công</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger">Đã hủy</span>
+                                }
+                            </td>
+
+                            <td class="text-end pe-4">
+                                <!-- Nút Xem chi tiết -->
+                                <a asp-action="Details" asp-route-id="@item.CartId" class="btn btn-outline-secondary btn-sm">
+                                    Chi tiết
+                                </a>
+
+                                <!-- Nút Hủy đơn: Chỉ hiện khi trạng thái là 0 (Chờ xác nhận) -->
+                                @if (item.OrderStatus == 0)
+                                {
+                                    <a asp-action="CancelOrder" asp-route-id="@item.CartId" class="btn btn-danger btn-sm ms-1"
+                                       onclick="return confirm('Bạn có chắc chắn muốn hủy đơn hàng này không? Hành động này không thể hoàn tác.');">
+                                        Hủy đơn
+                                    </a>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="text-center py-5 bg-light rounded">
+            <p class="text-muted">Bạn chưa có đơn hàng nào.</p>
+            <a asp-controller="Home" asp-action="Index" class="btn btn-primary">Mua sắm ngay</a>
+        </div>
+    }
+</div>

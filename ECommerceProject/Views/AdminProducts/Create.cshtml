@@ -1,0 +1,36 @@
+﻿@model ECommerceProject.Models.Product
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml"; ViewData["Title"] = "Thêm sản phẩm";
+}
+
+<div class="card">
+    <div class="card-body">
+        <!-- enctype="multipart/form-data" BẮT BUỘC ĐỂ UPLOAD ẢNH -->
+        <form asp-action="Create" method="post" enctype="multipart/form-data">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label>Tên sản phẩm</label>
+                    <input asp-for="ProductName" class="form-control" required />
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label>Giá tiền</label>
+                    <input asp-for="Price" type="number" class="form-control" required />
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label>Danh mục</label>
+                    <select asp-for="CategoryId" class="form-control" asp-items="ViewBag.Categories"></select>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label>Hình ảnh</label>
+                    <input type="file" name="imageFile" class="form-control" accept="image/*" required />
+                </div>
+                <div class="col-12 mb-3">
+                    <label>Mô tả</label>
+                    <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Lưu sản phẩm</button>
+            <a asp-action="Index" class="btn btn-secondary">Hủy</a>
+        </form>
+    </div>
+</div>

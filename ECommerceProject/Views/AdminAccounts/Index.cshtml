@@ -1,0 +1,79 @@
+﻿@model IEnumerable<ECommerceProject.Models.Customer>
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "Quản lý Tài khoản";
+}
+
+<h4 class="fw-bold mb-4">Danh sách người dùng hệ thống</h4>
+
+<div class="card shadow-sm">
+    <div class="card-body p-0">
+        <table class="table table-bordered table-hover mb-0 align-middle">
+            <thead class="bg-light">
+                <tr>
+                    <th>ID</th>
+                    <th>Họ tên</th>
+                    <th>Email</th>
+                    <th>Địa chỉ</th>
+                    <th class="text-center">Vai trò</th>
+                    <th class="text-center" style="width: 300px;">Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.CustomerId</td>
+                        <td>
+                            <div class="fw-bold">@item.LastName @item.FirstName</div>
+                        </td>
+                        <td>
+                            <a href="mailto:@item.Email" class="text-decoration-none">@item.Email</a>
+                        </td>
+                        <td>@(item.Address ?? "Chưa cập nhật")</td>
+                        <td class="text-center">
+                            @if (item.Role == "Admin")
+                            {
+                                <span class="badge bg-danger">Quản trị viên</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">Khách hàng</span>
+                            }
+                        </td>
+                        <td class="text-center">
+                            <div class="btn-group" role="group">
+                                <!-- NÚT SỬA (MỚI THÊM) -->
+                                <a asp-action="Edit" asp-route-id="@item.CustomerId" class="btn btn-warning btn-sm text-white" title="Sửa thông tin">
+                                    <i class="fas fa-edit"></i> Sửa
+                                </a>
+
+                                <!-- Nút đổi quyền (Giữ nguyên) -->
+                                @if (item.Role == "User")
+                                {
+                                    <a asp-action="ToggleRole" asp-route-id="@item.CustomerId" class="btn btn-outline-primary btn-sm ms-1"
+                                       onclick="return confirm('Bạn muốn cấp quyền Admin cho người này?');" title="Nâng cấp lên Admin">
+                                        <i class="fas fa-arrow-up"></i> Admin
+                                    </a>
+                                }
+                                else
+                                {
+                                    <a asp-action="ToggleRole" asp-route-id="@item.CustomerId" class="btn btn-outline-secondary btn-sm ms-1"
+                                       onclick="return confirm('Bạn muốn hủy quyền Admin của người này?');" title="Hạ xuống User">
+                                        <i class="fas fa-arrow-down"></i> User
+                                    </a>
+                                }
+
+                                <!-- Nút xóa (Giữ nguyên) -->
+                                <a asp-action="Delete" asp-route-id="@item.CustomerId" class="btn btn-danger btn-sm ms-1"
+                                   onclick="return confirm('Xóa tài khoản này sẽ xóa luôn lịch sử mua hàng của họ. Bạn chắc chứ?');">
+                                    <i class="fas fa-trash-alt"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

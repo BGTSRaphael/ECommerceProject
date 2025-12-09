@@ -1,0 +1,75 @@
+﻿@model List<ECommerceProject.Models.CartItem>
+
+@{
+    ViewData["Title"] = "Thanh toán";
+    decimal total = Model.Sum(x => x.Total);
+}
+
+<div class="container mt-5">
+    <h2 class="mb-4 fw-bold text-center">Thanh toán đơn hàng</h2>
+
+    <form asp-action="Checkout" method="post">
+        <div class="row">
+            <!-- CỘT TRÁI: THÔNG TIN KHÁCH HÀNG -->
+            <div class="col-md-7">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-white py-3">
+                        <h5 class="mb-0 fw-bold">Thông tin giao hàng</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Họ (*)</label>
+                                <input type="text" name="lastName" class="form-control" required placeholder="Nguyễn">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Tên (*)</label>
+                                <input type="text" name="firstName" class="form-control" required placeholder="Văn A">
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Email (*)</label>
+                            <input type="email" name="email" class="form-control" required placeholder="email@example.com">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Địa chỉ nhận hàng (*)</label>
+                            <input type="text" name="address" class="form-control" required placeholder="Số nhà, Đường, Phường...">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CỘT PHẢI: TÓM TẮT ĐƠN HÀNG -->
+            <div class="col-md-5">
+                <div class="card shadow-sm bg-light">
+                    <div class="card-body">
+                        <h5 class="fw-bold mb-3">Đơn hàng của bạn</h5>
+                        <ul class="list-group list-group-flush mb-3 rounded">
+                            @foreach (var item in Model)
+                            {
+                                <li class="list-group-item d-flex justify-content-between lh-sm bg-transparent">
+                                    <div>
+                                        <h6 class="my-0">@item.ProductName</h6>
+                                        <small class="text-muted">SL: @item.Quantity x @item.Price.ToString("#,##0")</small>
+                                    </div>
+                                    <span class="text-muted">@item.Total.ToString("#,##0")</span>
+                                </li>
+                            }
+                            <li class="list-group-item d-flex justify-content-between bg-transparent fw-bold border-top-2">
+                                <span>Tổng cộng (VNĐ)</span>
+                                <strong class="text-danger">@total.ToString("#,##0")</strong>
+                            </li>
+                        </ul>
+
+                        <button type="submit" class="btn btn-success w-100 py-3 fw-bold fs-5">
+                            XÁC NHẬN ĐẶT HÀNG
+                        </button>
+                        <a asp-action="Index" class="btn btn-link w-100 text-decoration-none mt-2">Quay lại giỏ hàng</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

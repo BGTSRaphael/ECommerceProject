@@ -1,0 +1,72 @@
+﻿@model IEnumerable<ECommerceProject.Models.Product>
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "Quản lý Sản phẩm";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="fw-bold">Danh sách sản phẩm</h4>
+    <a asp-action="Create" class="btn btn-success shadow-sm">
+        <i class="fas fa-plus me-2"></i>Thêm sản phẩm mới
+    </a>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body p-0">
+        <table class="table table-bordered table-hover mb-0 align-middle">
+            <thead class="bg-light text-secondary">
+                <tr>
+                    <th class="text-center" style="width: 50px;">ID</th>
+                    <th class="text-center" style="width: 100px;">Hình ảnh</th>
+                    <th>Tên sản phẩm</th>
+                    <th style="width: 150px;">Giá tiền</th>
+                    <th style="width: 150px;">Danh mục</th>
+                    <th class="text-center" style="width: 180px;">Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td class="text-center fw-bold text-muted">@item.ProductId</td>
+                        <td class="text-center">
+                            <!-- Hiển thị ảnh nhỏ (thumbnail) -->
+                            <img src="~/images/@item.ImageUrl" class="img-thumbnail" style="width: 60px; height: 60px; object-fit: cover;" />
+                        </td>
+                        <td>
+                            <span class="fw-bold text-dark">@item.ProductName</span>
+                        </td>
+                        <td class="fw-bold text-danger">
+                            @item.Price.ToString("#,##0") ₫
+                        </td>
+                        <td>
+                            <span class="badge bg-info text-dark">@item.Category?.CategoryName</span>
+                        </td>
+                        <td class="text-center">
+                            <div class="btn-group" role="group">
+                                <!-- NÚT SỬA (MỚI THÊM) -->
+                                <a asp-action="Edit" asp-route-id="@item.ProductId" class="btn btn-warning btn-sm text-white" title="Sửa">
+                                    <i class="fas fa-edit"></i> Sửa
+                                </a>
+
+                                <!-- NÚT XÓA -->
+                                <a asp-action="Delete" asp-route-id="@item.ProductId" class="btn btn-danger btn-sm ms-1"
+                                   onclick="return confirm('Bạn có chắc chắn muốn xóa sản phẩm @item.ProductName không?');" title="Xóa">
+                                    <i class="fas fa-trash-alt"></i> Xóa
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Hiển thị thông báo nếu không có sản phẩm nào -->
+@if (!Model.Any())
+{
+    <div class="alert alert-warning text-center mt-3">
+        Chưa có sản phẩm nào trong hệ thống.
+    </div>
+}

@@ -1,0 +1,18 @@
+﻿@model ECommerceProject.Models.Category
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml"; ViewData["Title"] = "Sửa danh mục";
+}
+
+<div class="card shadow-sm" style="max-width: 500px;">
+    <div class="card-body">
+        <form asp-action="Edit" method="post">
+            <input type="hidden" asp-for="CategoryId" />
+            <div class="mb-3">
+                <label class="form-label fw-bold">Tên danh mục</label>
+                <input asp-for="CategoryName" class="form-control" required />
+            </div>
+            <button type="submit" class="btn btn-warning text-white">Cập nhật</button>
+            <a asp-action="Index" class="btn btn-secondary">Hủy</a>
+        </form>
+    </div>
+</div>

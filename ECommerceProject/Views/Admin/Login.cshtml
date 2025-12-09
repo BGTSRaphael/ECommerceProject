@@ -1,0 +1,78 @@
+﻿@{
+    Layout = null; // QUAN TRỌNG: Login đứng độc lập, không dùng chung Layout Admin
+}
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Đăng nhập Admin</title>
+    <!-- Link Bootstrap để giao diện đẹp -->
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+
+    <style>
+        body {
+            background: linear-gradient(120deg, #2980b9, #8e44ad);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-card {
+            width: 400px;
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 15px 25px rgba(0,0,0,.6);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-card">
+        <h3 class="text-center mb-4 fw-bold text-uppercase">Admin Login</h3>
+
+        <!-- Hiển thị lỗi nếu nhập sai -->
+        @if (ViewBag.Error != null)
+        {
+            <div class="alert alert-danger text-center">
+                <i class="fas fa-exclamation-circle me-2"></i>@ViewBag.Error
+            </div>
+        }
+
+        <form asp-action="Login" method="post">
+            <div class="mb-3">
+                <label class="form-label fw-bold">Tài khoản</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-user"></i></span>
+                    <input name="username" type="text" class="form-control" placeholder="Nhập admin" required autofocus />
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label fw-bold">Mật khẩu</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                    <input name="password" type="password" class="form-control" placeholder="Nhập 123456" required />
+                </div>
+            </div>
+
+            <div class="d-grid">
+                <button type="submit" class="btn btn-primary btn-lg">
+                    ĐĂNG NHẬP <i class="fas fa-sign-in-alt ms-2"></i>
+                </button>
+            </div>
+        </form>
+
+        <div class="text-center mt-3">
+            <a asp-controller="Home" asp-action="Index" class="text-decoration-none text-muted small">
+                <i class="fas fa-arrow-left"></i> Quay về trang chủ bán hàng
+            </a>
+        </div>
+    </div>
+
+</body>
+</html>

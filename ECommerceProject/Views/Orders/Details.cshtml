@@ -1,0 +1,71 @@
+﻿@model ECommerceProject.Models.Cart
+
+@{
+    ViewData["Title"] = "Chi tiết đơn hàng #" + Model.CartId;
+    decimal grandTotal = Model.CartDetails.Sum(x => x.Quantity * x.PriceAtTime);
+}
+
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="fw-bold text-dark">
+            Chi tiết đơn hàng <span class="text-primary">#@Model.CartId</span>
+        </h3>
+        <span class="text-muted">Ngày đặt: @Model.DateCreated.ToString("dd/MM/yyyy HH:mm")</span>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-white py-3">
+            <h5 class="mb-0 fw-bold text-secondary">Danh sách sản phẩm</h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="bg-light">
+                        <tr>
+                            <th class="ps-4">Sản phẩm</th>
+                            <th class="text-center">Số lượng</th>
+                            <th>Giá lúc mua</th>
+                            <th class="text-end pe-4">Thành tiền</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var detail in Model.CartDetails)
+                        {
+                            <tr>
+                                <td class="ps-4">
+                                    <div class="d-flex align-items-center">
+                                        <!-- Hiển thị ảnh (Check null để tránh lỗi) -->
+                                        <img src="~/images/@(detail.Product?.ImageUrl ?? "no-image.png")"
+                                             class="rounded border me-3" style="width: 60px; height: 60px; object-fit: cover;">
+                                        <div>
+                                            <h6 class="mb-0 fw-bold">@(detail.Product?.ProductName ?? "Sản phẩm đã bị xóa")</h6>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="text-center">x @detail.Quantity</td>
+                                <td>@detail.PriceAtTime.ToString("#,##0")</td>
+                                <td class="text-end pe-4 fw-bold">
+                                    @((detail.Quantity * detail.PriceAtTime).ToString("#,##0")) VNĐ
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                    <tfoot class="bg-light">
+                        <tr>
+                            <td colspan="3" class="text-end fw-bold py-3">Tổng cộng:</td>
+                            <td class="text-end pe-4 fw-bold text-danger fs-5 py-3">
+                                @grandTotal.ToString("#,##0") VNĐ
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-2"></i> Quay lại danh sách
+        </a>
+    </div>
+</div>

@@ -1,0 +1,113 @@
+﻿@model IEnumerable<ECommerceProject.Models.Cart>
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "Quản lý Đơn hàng";
+    int status = ViewBag.CurrentStatus; // Lấy trạng thái hiện tại
+}
+
+<h4 class="mb-3 fw-bold">Quản lý Đơn hàng</h4>
+
+<!-- BỘ LỌC TRẠNG THÁI -->
+<div class="btn-group mb-4 w-100 shadow-sm" role="group">
+    <a asp-action="Index" asp-route-status="0" class="btn @(status == 0 ? "btn-primary" : "btn-outline-primary")">
+        <i class="fas fa-clock me-2"></i>Chờ xác nhận
+    </a>
+    <a asp-action="Index" asp-route-status="1" class="btn @(status == 1 ? "btn-primary" : "btn-outline-primary")">
+        <i class="fas fa-truck me-2"></i>Đang giao
+    </a>
+    <a asp-action="Index" asp-route-status="2" class="btn @(status == 2 ? "btn-primary" : "btn-outline-primary")">
+        <i class="fas fa-check-circle me-2"></i>Đã giao
+    </a>
+    <a asp-action="Index" asp-route-status="3" class="btn @(status == 3 ? "btn-primary" : "btn-outline-primary")">
+        <i class="fas fa-times-circle me-2"></i>Đã hủy
+    </a>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body p-0">
+        <table class="table table-bordered table-hover mb-0 align-middle">
+            <thead class="bg-light">
+                <tr>
+                    <th>Mã Đơn</th>
+                    <th>Khách hàng</th>
+                    <th>Ngày đặt</th>
+                    <th>Tổng tiền</th>
+                    <th class="text-center">Trạng thái</th>
+                    <th class="text-center">Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Any())
+                {
+                    @foreach (var item in Model)
+                    {
+                        decimal total = item.CartDetails.Sum(d => d.Quantity * d.PriceAtTime);
+                        <tr>
+                            <td>#@item.CartId</td>
+                            <td>
+                                <strong>@item.Customer?.LastName @item.Customer?.FirstName</strong><br />
+                                <small class="text-muted">@item.Customer?.Email</small>
+                            </td>
+                            <td>@item.DateCreated.ToString("dd/MM/yyyy HH:mm")</td>
+                            <td class="text-danger fw-bold">@total.ToString("#,##0") VNĐ</td>
+                            <td class="text-center">
+                                @if (item.OrderStatus == 0)
+                                {
+                                    <span class="badge bg-warning text-dark">Chờ xác nhận</span>
+                                }
+                                else if (item.OrderStatus == 1)
+                                {
+
+                                    <span class="badge bg-primary">Đang giao</span>
+                                }
+                                else if (item.OrderStatus == 2)
+                                {
+
+                                    <span class="badge bg-success">Đã giao</span>
+                                }
+                                else
+                                {
+
+                                    <span class="badge bg-danger">Đã hủy</span>
+                                }
+                            </td>
+                            <td class="text-center">
+                                <a asp-action="Details" asp-route-id="@item.CartId" class="btn btn-info btn-sm text-white">
+                                    Xem chi tiết
+                                </a>
+
+                                <!-- Form cập nhật nhanh trạng thái -->
+                                @if (item.OrderStatus == 0)
+                                {
+                                    <form asp-action="UpdateStatus" method="post" class="d-inline ms-1">
+                                        <input type="hidden" name="id" value="@item.CartId" />
+                                        <input type="hidden" name="newStatus" value="1" />
+                                        <button type="submit" class="btn btn-outline-primary btn-sm" title="Chuyển sang Đang giao">
+                                            <i class="fas fa-shipping-fast"></i> Giao
+                                        </button>
+                                    </form>
+                                }
+                                @if (item.OrderStatus == 1)
+                                {
+                                    <form asp-action="UpdateStatus" method="post" class="d-inline ms-1">
+                                        <input type="hidden" name="id" value="@item.CartId" />
+                                        <input type="hidden" name="newStatus" value="2" />
+                                        <button type="submit" class="btn btn-outline-success btn-sm" title="Hoàn thành đơn">
+                                            <i class="fas fa-check"></i> Xong
+                                        </button>
+                                    </form>
+                                }
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="6" class="text-center py-4 text-muted">Không có đơn hàng nào ở trạng thái này.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
