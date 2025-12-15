@@ -22,46 +22,13 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
       
-    - name: Build solution
+    - name: Build
       run: dotnet build --configuration Release --no-restore
       
     - name: Test
-      run: dotnet test --no-build --verbosity normal --configuration Release --logger "trx;LogFileName=test-results.trx" --results-directory ./TestResults
-      continue-on-error: true
+      run: dotnet test --no-build --verbosity normal --configuration Release
+      continue-on-error: false
       
-    - name: Debug - Show test results location
+    - name: Test Summary
       if: always()
-      run: |
-        echo "Current directory:"
-        pwd
-        echo ""
-        echo "Directory contents:"
-        ls -la
-        echo ""
-        echo "Looking for TestResults:"
-        find . -type d -name "TestResults" 2>/dev/null || echo "No TestResults folder"
-        echo ""
-        echo "Looking for .trx files:"
-        find . -name "*.trx" 2>/dev/null || echo "No .trx files found"
-        
-    - name: Upload Test Results
-      uses: actions/upload-artifact@v4
-      if: always()
-      with:
-        name: test-results
-        path: |
-          **/TestResults/*.trx
-          TestResults/*.trx
-          ./**/TestResults/*.trx
-        if-no-files-found: warn
-        
-    - name: Publish Test Report
-      uses: dorny/test-reporter@v1
-      if: always()
-      with:
-        name: Test Results
-        path: |
-          **/TestResults/*.trx
-          TestResults/*.trx
-        reporter: dotnet-trx
-        fail-on-error: false
+      run: echo "✅ Tests completed"
