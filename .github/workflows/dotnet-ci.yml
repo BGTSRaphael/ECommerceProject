@@ -1,0 +1,70 @@
+name: .NET CI/CD
+
+on:
+  push:
+    branches: [ master, main, develop ]
+  pull_request:
+    branches: [ master, main, develop ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'
+        
+    - name: Restore dependencies
+      run: dotnet restore ECommerceProject.sln
+      
+    - name: Build solution
+      run: dotnet build ECommerceProject.sln --configuration Release --no-restore
+      
+    - name: Run tests
+      run: dotnet test ECommerceProject.sln --configuration Release --no-build --verbosity normal --logger "trx;LogFileName=test-results.trx" --results-directory "${{ github.workspace }}/TestResults"
+      continue-on-error: true
+      id: test-step
+      
+    - name: Debug - List all files
+      if: always()
+      run: |
+        echo "=== Workspace contents ==="
+        ls -la ${{ github.workspace }}
+        echo ""
+        echo "=== TestResults folder ==="
+        ls -la ${{ github.workspace }}/TestResults/ || echo "TestResults folder not found"
+        echo ""
+        echo "=== Find all .trx files ==="
+        find ${{ github.workspace }} -name "*.trx" -type f || echo "No .trx files found"
+        
+    - name: Upload test results
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-results
+        path: ${{ github.workspace }}/TestResults/**/*.trx
+        if-no-files-found: error
+        
+    - name: Publish Test Report
+      uses: dorny/test-reporter@v1
+      if: always()
+      with:
+        name: 'Test Results'
+        path: '${{ github.workspace }}/TestResults/**/*.trx'
+        reporter: dotnet-trx
+        fail-on-error: false
+        
+    - name: Test Summary
+      if: always()
+      run: |
+        if [ "${{ steps.test-step.outcome }}" == "failure" ]; then
+          echo "❌ Tests failed!"
+          exit 1
+        else
+          echo "✅ Tests passed!"
+        fi
